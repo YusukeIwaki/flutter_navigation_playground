@@ -36,18 +36,28 @@ class FirstScreen extends StatelessWidget {
         child: new FlatButton(
           child: new Text('Launch new screen'),
           onPressed: () {
-            Navigator.push(
-              context,
-              new MaterialPageRoute(builder: (context) => new SecondScreen()),
-            );
+            _navigateToSecondScreen(context, "hoge");
           },
         ),
       ),
     );
   }
+
+  _navigateToSecondScreen(BuildContext context, String data) async {
+    final result = await Navigator.push(
+      context,
+      new MaterialPageRoute(builder: (context) => new SecondScreen(data: data)),
+    );
+
+    debugPrint(result);
+  }
 }
 
 class SecondScreen extends StatelessWidget {
+  final String data;
+
+  SecondScreen({Key key, this.data}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -57,9 +67,9 @@ class SecondScreen extends StatelessWidget {
       body: new Center(
         child: new FlatButton(
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pop(context, "OK from Secondary:$data");
           },
-          child: new Text('Go back!'),
+          child: new Text('Go back from $data!'),
         ),
       ),
     );

@@ -26,30 +26,28 @@ class MyApp extends StatelessWidget {
 }
 
 class FirstScreen extends StatelessWidget {
+  final String data;
+
+  FirstScreen({Key key, this.data: "hoge"}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text('First Screen'),
+        title: new Text('First Screen $data'),
       ),
       body: new Center(
         child: new FlatButton(
           child: new Text('Launch new screen'),
           onPressed: () {
-            _navigateToSecondScreen(context, "hoge");
+            Navigator.push(
+              context,
+              new MaterialPageRoute(builder: (context) => new SecondScreen(data: "->$data")),
+            );
           },
         ),
       ),
     );
-  }
-
-  _navigateToSecondScreen(BuildContext context, String data) async {
-    final result = await Navigator.push(
-      context,
-      new MaterialPageRoute(builder: (context) => new SecondScreen(data: data)),
-    );
-
-    debugPrint(result);
   }
 }
 
@@ -67,7 +65,34 @@ class SecondScreen extends StatelessWidget {
       body: new Center(
         child: new FlatButton(
           onPressed: () {
-            Navigator.pop(context, "OK from Secondary:$data");
+            Navigator.push(
+                context,
+                new MaterialPageRoute(builder: (context) => new ConfirmScreen(data: "OK from Secondary:$data")));
+          },
+          child: new Text('Confirm $data!'),
+        ),
+      ),
+    );
+  }
+}
+
+class ConfirmScreen extends StatelessWidget {
+  final String data;
+
+  ConfirmScreen({Key key, this.data}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text("Second Screen"),
+      ),
+      body: new Center(
+        child: new FlatButton(
+          onPressed: () {
+            Route routeToTop = new MaterialPageRoute(builder: (context) => new FirstScreen(data: "OK from Confirmation:$data"));
+            Navigator.of(context)
+                .pushAndRemoveUntil(routeToTop, (route) => false);
           },
           child: new Text('Go back from $data!'),
         ),
